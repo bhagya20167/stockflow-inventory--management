@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Create account{% endblock %}
+{% block content %}
+<section class="auth-layout">
+  <div class="auth-promo">
+    <div class="promo-badge"><span class="status-pulse"></span> START WITH A CLEARER VIEW</div>
+    <div>
+      <div class="promo-icon">✳</div>
+      <h1>Build better habits.<br><span>Build better business.</span></h1>
+      <p>Create your workspace and bring your inventory into one simple, organized place.</p>
+    </div>
+    <div class="promo-bottom"><span class="mini-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>Start organized. Stay in control.</span></div>
+  </div>
+  <div class="auth-panel auth-panel-signup">
+    <div class="auth-heading"><span class="eyebrow">GET STARTED</span><h2>Create your workspace</h2><p>A few details and you're ready to go.</p></div>
+    <form class="form-stack" method="post" action="{{ url_for('signup') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="field"><label for="organization_name">Organization name</label><input id="organization_name" name="organization_name" type="text" placeholder="e.g. Acme Supplies" maxlength="150" required value="{{ request.form.get('organization_name', '') }}"></div>
+      <div class="field"><label for="email">Work email</label><input id="email" name="email" type="email" placeholder="you@company.com" autocomplete="email" required value="{{ request.form.get('email', '') }}"></div>
+      <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" placeholder="At least 8 characters" minlength="8" autocomplete="new-password" required></div>
+      <div class="field"><label for="confirm_password">Confirm password</label><input id="confirm_password" name="confirm_password" type="password" placeholder="Re-enter your password" minlength="8" autocomplete="new-password" required></div>
+      <button class="button button-primary button-wide" type="submit">Create account <span aria-hidden="true">→</span></button>
+    </form>
+    <p class="auth-switch">Already have an account? <a href="{{ url_for('login') }}">Sign in</a></p>
+  </div>
+</section>
+{% endblock %}

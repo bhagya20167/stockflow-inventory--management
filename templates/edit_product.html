@@ -1,0 +1,23 @@
+
+{% extends "base.html" %}
+{% block title %}Edit product{% endblock %}
+{% block content %}
+<section class="page-header">
+  <div><span class="eyebrow">INVENTORY / EDIT</span><h1>Edit product</h1><p>Update details for <strong>{{ product.name }}</strong>.</p></div>
+  <a class="button button-secondary" href="{{ url_for('products') }}">← Back to products</a>
+</section>
+<section class="content-card form-card edit-card">
+  <div class="section-heading"><div><h2>Product details</h2><p>Changes are saved to your workspace inventory.</p></div><span class="subtle-tag">SKU · {{ product.sku }}</span></div>
+  <form class="product-form" method="post" action="{{ url_for('edit_product', product_id=product.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="field"><label for="name">Product name <span class="required">*</span></label><input id="name" name="name" maxlength="150" required value="{{ product.name }}"></div>
+    <div class="field"><label for="sku">SKU <span class="required">*</span></label><input id="sku" name="sku" maxlength="100" required value="{{ product.sku }}"></div>
+    <div class="field field-full"><label for="description">Description <span class="optional">(optional)</span></label><textarea id="description" name="description" rows="3" placeholder="Add a short description">{{ product.description or '' }}</textarea></div>
+    <div class="field"><label for="quantity">Quantity in stock <span class="required">*</span></label><input id="quantity" name="quantity" type="number" min="0" step="1" required value="{{ product.quantity }}"></div>
+    <div class="field"><label for="low_stock_threshold">Low-stock threshold</label><input id="low_stock_threshold" name="low_stock_threshold" type="number" min="0" step="1" value="{{ product.low_stock_threshold if product.low_stock_threshold is not none else '' }}"></div>
+    <div class="field"><label for="cost_price">Cost price <span class="optional">(optional)</span></label><div class="input-prefix"><span>₹</span><input id="cost_price" name="cost_price" type="number" min="0" step="0.01" value="{{ product.cost_price if product.cost_price is not none else '' }}"></div></div>
+    <div class="field"><label for="selling_price">Selling price <span class="optional">(optional)</span></label><div class="input-prefix"><span>₹</span><input id="selling_price" name="selling_price" type="number" min="0" step="0.01" value="{{ product.selling_price if product.selling_price is not none else '' }}"></div></div>
+    <div class="form-actions field-full"><span class="form-hint">Make sure stock details are accurate.</span><div class="button-row"><a class="button button-ghost" href="{{ url_for('products') }}">Cancel</a><button class="button button-primary" type="submit">Save changes <span>→</span></button></div></div>
+  </form>
+</section>
+{% endblock %}

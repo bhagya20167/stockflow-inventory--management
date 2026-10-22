@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Products{% endblock %}
+{% block content %}
+<section class="page-header">
+  <div><span class="eyebrow">INVENTORY</span><h1>Products</h1><p>Manage your catalog, monitor stock, and keep details up to date.</p></div>
+  <a class="button button-primary" href="#add-product"><span class="button-plus">＋</span> Add product</a>
+</section>
+
+<section class="content-card form-card" id="add-product">
+  <div class="section-heading"><div><h2>Add a product</h2><p>Enter the product details below to add it to your inventory.</p></div><span class="subtle-tag">NEW ITEM</span></div>
+  <form class="product-form" method="post" action="{{ url_for('products') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="field"><label for="name">Product name <span class="required">*</span></label><input id="name" name="name" maxlength="150" placeholder="e.g. Wireless keyboard" required value="{{ request.form.get('name', '') }}"></div>
+    <div class="field"><label for="sku">SKU <span class="required">*</span></label><input id="sku" name="sku" maxlength="100" placeholder="e.g. KEY-001" required value="{{ request.form.get('sku', '') }}"></div>
+    <div class="field field-full"><label for="description">Description <span class="optional">(optional)</span></label><textarea id="description" name="description" rows="2" placeholder="A short description of this product">{{ request.form.get('description', '') }}</textarea></div>
+    <div class="field"><label for="quantity">Quantity in stock <span class="required">*</span></label><input id="quantity" name="quantity" type="number" min="0" step="1" value="{{ request.form.get('quantity', '0') }}" required></div>
+    <div class="field"><label for="low_stock_threshold">Low-stock threshold</label><input id="low_stock_threshold" name="low_stock_threshold" type="number" min="0" step="1" placeholder="e.g. 5" value="{{ request.form.get('low_stock_threshold', '') }}"><span class="field-help">Get a visual warning at this quantity.</span></div>
+    <div class="field"><label for="cost_price">Cost price <span class="optional">(optional)</span></label><div class="input-prefix"><span>₹</span><input id="cost_price" name="cost_price" type="number" min="0" step="0.01" placeholder="0.00" value="{{ request.form.get('cost_price', '') }}"></div></div>
+    <div class="field"><label for="selling_price">Selling price <span class="optional">(optional)</span></label><div class="input-prefix"><span>₹</span><input id="selling_price" name="selling_price" type="number" min="0" step="0.01" placeholder="0.00" value="{{ request.form.get('selling_price', '') }}"></div></div>
+    <div class="form-actions field-full"><span class="form-hint"><span class="required">*</span> Required fields</span><button class="button button-primary" type="submit">Save product <span>→</span></button></div>
+  </form>
+</section>
+
+<section class="content-card inventory-card">
+  <div class="section-heading"><div><h2>All products <span class="count-badge">{{ products|length }}</span></h2><p>Your current inventory catalog.</p></div><div class="table-search"><span>⌕</span><input id="product-search" type="search" placeholder="Search products..." aria-label="Search products"></div></div>
+  {% if products %}
+  <div class="table-wrap"><table class="data-table" id="products-table"><thead><tr><th>Product</th><th>SKU</th><th>Quantity</th><th>Cost price</th><th>Selling price</th><th>Stock status</th><th class="actions-heading">Actions</th></tr></thead><tbody>
+  {% for product in products %}
+  {% set low = product.low_stock_threshold is not none and product.quantity <= product.low_stock_threshold %}
+  <tr>
+    <td><div class="product-name"><span class="product-symbol">{{ product.name[:1]|upper }}</span><span><strong>{{ product.name }}</strong>{% if product.description %}<small>{{ product.description }}</small>{% endif %}</span></div></td>
+    <td class="muted-cell">{{ product.sku }}</td><td><strong>{{ product.quantity }}</strong> <span class="muted-cell">units</span></td>
+    <td>{% if product.cost_price is not none %}₹{{ '%.2f'|format(product.cost_price) }}{% else %}<span class="muted-cell">—</span>{% endif %}</td>
+    <td>{% if product.selling_price is not none %}₹{{ '%.2f'|format(product.selling_price) }}{% else %}<span class="muted-cell">—</span>{% endif %}</td>
+    <td>{% if low %}<span class="stock-pill stock-low"><span></span> Low stock</span>{% else %}<span class="stock-pill stock-good"><span></span> In stock</span>{% endif %}</td>
+    <td><div class="row-actions"><a class="action-link" href="{{ url_for('edit_product', product_id=product.id) }}">Edit</a><form method="post" action="{{ url_for('delete_product', product_id=product.id) }}" onsubmit="return confirm('Delete {{ product.name|e }}? This action cannot be undone.');"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="action-link action-danger" type="submit">Delete</button></form></div></td>
+  </tr>
+  {% endfor %}
+  </tbody></table></div>
+  <div class="table-footer"><span>Showing <strong id="visible-count">{{ products|length }}</strong> of {{ products|length }} products</span><span>Inventory is scoped to your workspace.</span></div>
+  {% else %}
+  <div class="empty-state"><span class="empty-icon">▦</span><h3>Your inventory starts here</h3><p>You haven’t added any products yet. Use the form above to create your first item.</p><a class="button button-secondary" href="#add-product">Add your first product</a></div>
+  {% endif %}
+</section>
+<script>
+(function () {
+  const search = document.getElementById('product-search');
+  const table = document.getElementById('products-table');
+  if (!search || !table) return;
+  const rows = Array.from(table.querySelectorAll('tbody tr'));
+  const count = document.getElementById('visible-count');
+  search.addEventListener('input', function () {
+    const query = search.value.trim().toLowerCase();
+    let visible = 0;
+    rows.forEach(function (row) {
+      const match = row.textContent.toLowerCase().includes(query);
+      row.hidden = !match;
+      if (match) visible += 1;
+    });
+    if (count) count.textContent = visible;
+  });
+})();
+</script>
+{% endblock %}
+
