@@ -1,5 +1,28 @@
 StockFlow – Inventory Management System
 
+## 🚀 Live Demo
+
+**Live Website:** [StockFlow Inventory Management](https://stockflow-inventory-management-nu7y.onrender.com)
+
+StockFlow is a web-based inventory management application that helps users manage products, monitor stock levels, and identify low-stock items.
+
+## ✨ Key Features
+
+- User registration and login
+- Add, view, edit, and delete products
+- Inventory quantity tracking
+- Low-stock alerts
+- Organization-based data separation
+- MySQL database integration
+
+## 🛠️ Tech Stack
+
+- **Backend:** Python, Flask
+- **Frontend:** HTML, CSS, JavaScript
+- **Database:** MySQL
+- **Deployment:** Render
+- **Database Hosting:** Aiven
+- **Version Control:** Git and GitHub
 
 
 StockFlow is a web-based inventory management application designed to help organizations manage products, track stock quantities, and identify products that need restocking.
